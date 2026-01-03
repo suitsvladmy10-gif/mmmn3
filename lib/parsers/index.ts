@@ -1,8 +1,9 @@
-import { BaseParser, ParsedTransaction } from "./base";
+import { BaseParser } from "./base";
 import { SberbankParser } from "./sberbank";
 import { TinkoffParser } from "./tinkoff";
 import { VTBParser } from "./vtb";
 import { parseWithAI } from "./ai-parser";
+import type { ParsedTransaction } from "./base";
 
 const parsers: BaseParser[] = [
   new SberbankParser(),
@@ -60,4 +61,5 @@ export async function parseBankStatement(
   }
 }
 
-export { BaseParser, ParsedTransaction };
+export { BaseParser };
+export type { ParsedTransaction };

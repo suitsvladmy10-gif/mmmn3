@@ -1,9 +1,11 @@
 import { getCategoryByKeywords } from "./keywords";
 
+export type CategorizationMethod = "keywords" | "ai" | "gemini";
+
 export interface CategorizationResult {
   category: string;
   confidence: number; // 0-1, где 1 - высокая уверенность
-  method: "keywords";
+  method: CategorizationMethod;
 }
 
 export function categorizeTransaction(

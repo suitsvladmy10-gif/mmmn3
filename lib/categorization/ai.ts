@@ -1,5 +1,4 @@
-import OpenAI from "openai";
-import { CategorizationResult } from "./local";
+import type { CategorizationResult } from "./local";
 
 const categories = [
   "Доходы",
@@ -17,7 +16,6 @@ export async function categorizeWithAI(
   description: string,
   amount: number
 ): Promise<CategorizationResult> {
-  // Если сумма положительная, это доход
   if (amount > 0) {
     return {
       category: "Доходы",
@@ -31,15 +29,18 @@ export async function categorizeWithAI(
     throw new Error("OPENAI_API_KEY не установлен");
   }
 
-  const openai = new OpenAI({ apiKey });
-
-  try {
-    const response = await openai.chat.completions.create({
+  const response = await fetch("https://api.openai.com/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${apiKey}`,
+    },
+    body: JSON.stringify({
       model: "gpt-4o-mini",
       messages: [
         {
           role: "system",
-          content: `Ты помощник для категоризации банковских транзакций. 
+          content: `Ты помощник для категоризации банковских транзакций.
 Твоя задача - определить категорию транзакции на основе описания.
 Доступные категории: ${categories.join(", ")}.
 Отвечай только названием категории, без дополнительных объяснений.`,
@@ -51,20 +52,21 @@ export async function categorizeWithAI(
       ],
       temperature: 0.3,
       max_tokens: 20,
-    });
+    }),
+  });
 
-    const category = response.choices[0]?.message?.content?.trim() || "Другое";
-
-    // Проверяем, что категория валидна
-    const validCategory = categories.includes(category) ? category : "Другое";
-
-    return {
-      category: validCategory,
-      confidence: 0.9, // AI обычно более уверен
-      method: "ai",
-    };
-  } catch (error) {
-    console.error("Ошибка AI категоризации:", error);
-    throw error;
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`OpenAI API error: ${response.status} ${errorText}`);
   }
+
+  const data = await response.json();
+  const category = data.choices?.[0]?.message?.content?.trim() || "Другое";
+  const validCategory = categories.includes(category) ? category : "Другое";
+
+  return {
+    category: validCategory,
+    confidence: 0.9,
+    method: "ai",
+  };
 }

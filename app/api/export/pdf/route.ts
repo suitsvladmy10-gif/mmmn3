@@ -73,7 +73,7 @@ export async function POST(request: NextRequest) {
 
     // Заголовки таблицы
     doc.setFontSize(9);
-    doc.setFont(undefined, "bold");
+    doc.setFont("helvetica", "bold");
     doc.text("Дата", 14, yPos);
     doc.text("Банк", 40, yPos);
     doc.text("Описание", 70, yPos);
@@ -81,7 +81,7 @@ export async function POST(request: NextRequest) {
     doc.text("Сумма", 170, yPos);
     yPos += 5;
 
-    doc.setFont(undefined, "normal");
+    doc.setFont("helvetica", "normal");
     doc.line(14, yPos, 200, yPos);
     yPos += 5;
 

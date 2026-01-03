@@ -45,6 +45,10 @@ YANDEX_VISION_API_KEY="ВАШ_YANDEX_VISION_API_KEY"
 # Опционально
 YANDEX_FOLDER_ID=""
 
+# Gemini (опционально, для AI парсинга и категоризации)
+# Получите ключ на https://ai.google.dev/gemini-api/docs/api-key
+GEMINI_API_KEY="ВАШ_GEMINI_API_KEY"
+
 # OpenAI (optional, for AI categorization)
 # Получите ключ на https://platform.openai.com/
 OPENAI_API_KEY="ВАШ_OPENAI_API_KEY"
@@ -92,5 +96,4 @@ npm run dev
 2. Перейдите в раздел API Keys
 3. Создайте новый ключ
 4. Скопируйте ключ в `OPENAI_API_KEY`
-
 

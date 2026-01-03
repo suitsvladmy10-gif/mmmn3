@@ -1,7 +1,9 @@
-import { categorizeTransaction, CategorizationResult } from "./local";
+import { categorizeTransaction } from "./local";
 import { categorizeWithGemini } from "./gemini";
+import type { CategorizationResult } from "./local";
 
-export { categorizeTransaction, CategorizationResult };
+export { categorizeTransaction };
+export type { CategorizationResult };
 export { categorizeWithGemini };
 
 export async function categorize(

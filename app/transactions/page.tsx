@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
 import { Navbar } from "@/components/layout/Navbar";
@@ -40,13 +40,7 @@ export default function TransactionsPage() {
     }
   }, [status]);
 
-  useEffect(() => {
-    if (session) {
-      fetchTransactions();
-    }
-  }, [session, categoryFilter, bankFilter]);
-
-  const fetchTransactions = async () => {
+  const fetchTransactions = useCallback(async () => {
     try {
       const params = new URLSearchParams();
       if (categoryFilter !== "all") {
@@ -65,7 +59,13 @@ export default function TransactionsPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [categoryFilter, bankFilter]);
+
+  useEffect(() => {
+    if (session) {
+      fetchTransactions();
+    }
+  }, [session, fetchTransactions]);
 
   const handleExportJSON = () => {
     const dataStr = JSON.stringify(transactions, null, 2);

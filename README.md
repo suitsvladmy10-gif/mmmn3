@@ -47,7 +47,9 @@ DATABASE_URL="file:./dev.db"
 NEXTAUTH_SECRET="your-secret-key-here" # Сгенерируйте с помощью: openssl rand -base64 32
 NEXTAUTH_URL="http://localhost:3000"
 YANDEX_VISION_API_KEY="your-yandex-vision-api-key"
+YANDEX_FOLDER_ID="your-yandex-folder-id" # Опционально
 OPENAI_API_KEY="your-openai-api-key" # Опционально, для AI категоризации
+GEMINI_API_KEY="your-gemini-api-key" # Опционально, для AI категоризации
 ```
 
 4. Настройте базу данных:
@@ -127,8 +129,17 @@ npm run build
 npm start
 ```
 
+## Деплой на Render
+
+1. **Подготовьте репозиторий.** Закоммитьте код и `.env.example`, но не `.env.local`. Залейте проект на GitHub.
+2. **Создайте Web Service на Render.**
+   - Environment: Node 18+
+   - Build Command: `npm install && npx prisma generate && npm run build`
+   - Start Command: `npx prisma migrate deploy && npm run start`
+3. **Настройте переменные окружения** (`DATABASE_URL`, `NEXTAUTH_SECRET`, `NEXTAUTH_URL`, `YANDEX_VISION_API_KEY`, `YANDEX_FOLDER_ID`, `OPENAI_API_KEY`, `GEMINI_API_KEY`).
+4. **База данных.** Для продакшена используйте Postgres (Render Managed PostgreSQL) и обновите `DATABASE_URL`. Выполните `prisma migrate deploy` перед первым запуском.
+5. **Проверка.** После деплоя убедитесь, что OCR и AI ключи активны, а загрузка выписок работает.
+
 ## Лицензия
 
 MIT
-
-
