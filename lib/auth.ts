@@ -3,6 +3,10 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import { prisma } from "@/lib/db";
 import bcrypt from "bcryptjs";
 
+if (!process.env.NEXTAUTH_URL && process.env.RENDER_EXTERNAL_URL) {
+  process.env.NEXTAUTH_URL = process.env.RENDER_EXTERNAL_URL;
+}
+
 export const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
@@ -61,5 +65,5 @@ export const authOptions: NextAuthOptions = {
       return session;
     },
   },
-  secret: process.env.NEXTAUTH_SECRET,
+  secret: process.env.NEXTAUTH_SECRET || process.env.AUTH_SECRET,
 };
