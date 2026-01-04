@@ -8,3 +8,5 @@ services:
     envVars:
       - key: NEXTAUTH_SECRET
         generateValue: true
+      - key: DATABASE_URL
+        value: file:./dev.db
