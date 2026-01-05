@@ -7,17 +7,7 @@ export default withAuth(
   },
   {
     callbacks: {
-      authorized: ({ token, req }) => {
-        const { pathname } = req.nextUrl;
-        
-        // Публичные маршруты
-        if (pathname === "/login" || pathname === "/register") {
-          return !token; // Разрешить доступ только если не авторизован
-        }
-        
-        // Защищенные маршруты
-        return !!token;
-      },
+      authorized: () => true,
     },
   }
 );

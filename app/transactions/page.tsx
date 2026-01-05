@@ -1,8 +1,6 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { useSession } from "next-auth/react";
-import { redirect } from "next/navigation";
 import { Navbar } from "@/components/layout/Navbar";
 import { TransactionTable } from "@/components/transactions/TransactionTable";
 import { Button } from "@/components/ui/button";
@@ -28,17 +26,10 @@ interface Transaction {
 }
 
 export default function TransactionsPage() {
-  const { data: session, status } = useSession();
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(true);
   const [categoryFilter, setCategoryFilter] = useState<string>("all");
   const [bankFilter, setBankFilter] = useState<string>("all");
-
-  useEffect(() => {
-    if (status === "unauthenticated") {
-      redirect("/login");
-    }
-  }, [status]);
 
   const fetchTransactions = useCallback(async () => {
     try {
@@ -62,10 +53,8 @@ export default function TransactionsPage() {
   }, [categoryFilter, bankFilter]);
 
   useEffect(() => {
-    if (session) {
-      fetchTransactions();
-    }
-  }, [session, fetchTransactions]);
+    fetchTransactions();
+  }, [fetchTransactions]);
 
   const handleExportJSON = () => {
     const dataStr = JSON.stringify(transactions, null, 2);
@@ -103,7 +92,7 @@ export default function TransactionsPage() {
     }
   };
 
-  if (status === "loading" || loading) {
+  if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div>Загрузка...</div>

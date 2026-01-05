@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { getUserIdFromSession } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { parseBankStatement } from "@/lib/parsers";
 import { categorize } from "@/lib/categorization";
@@ -9,8 +8,8 @@ import { convertFileToBase64, extractTextFromPDF, isImageFile, isPDFFile } from 
 
 export async function POST(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user?.id) {
+    const userId = await getUserIdFromSession();
+    if (!userId) {
       return NextResponse.json(
         { error: "Не авторизован" },
         { status: 401 }
@@ -101,7 +100,7 @@ export async function POST(request: NextRequest) {
         // Сохранение в БД
         const saved = await prisma.transaction.create({
           data: {
-            userId: session.user.id,
+            userId,
             bank: parsed.bank,
             date: transaction.date,
             time: transaction.time || null,
@@ -118,12 +117,12 @@ export async function POST(request: NextRequest) {
         await prisma.bankAccount.upsert({
           where: {
             userId_bank: {
-              userId: session.user.id,
+              userId,
               bank: parsed.bank,
             },
           },
           create: {
-            userId: session.user.id,
+            userId,
             bank: parsed.bank,
             lastBalance: transaction.balance,
           },

@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -91,13 +90,8 @@ export default function LoginPage() {
               {loading ? "Вход..." : "Войти"}
             </Button>
           </form>
-          <div className="mt-4 text-center text-sm">
-            <span className="text-gray-600 dark:text-gray-400">
-              Нет аккаунта?{" "}
-            </span>
-            <Link href="/register" className="text-primary hover:underline">
-              Зарегистрироваться
-            </Link>
+          <div className="mt-4 text-center text-sm text-gray-600 dark:text-gray-400">
+            Регистрация временно отключена
           </div>
         </CardContent>
       </Card>

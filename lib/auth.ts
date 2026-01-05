@@ -1,4 +1,4 @@
-import { NextAuthOptions } from "next-auth";
+import { NextAuthOptions, getServerSession } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { prisma } from "@/lib/db";
 import bcrypt from "bcryptjs";
@@ -67,3 +67,38 @@ export const authOptions: NextAuthOptions = {
   },
   secret: process.env.NEXTAUTH_SECRET || process.env.AUTH_SECRET,
 };
+
+async function getOrCreateDemoUserId() {
+  const demoEmail = "demo@money-planner.local";
+  const existing = await prisma.user.findUnique({
+    where: { email: demoEmail },
+    select: { id: true },
+  });
+  if (existing) {
+    return existing.id;
+  }
+
+  const demoPasswordHash = await bcrypt.hash("demo-password", 10);
+  const created = await prisma.user.create({
+    data: {
+      email: demoEmail,
+      password: demoPasswordHash,
+    },
+    select: { id: true },
+  });
+
+  return created.id;
+}
+
+export async function getUserIdFromSession() {
+  const session = await getServerSession(authOptions);
+  if (session?.user?.id) {
+    return session.user.id;
+  }
+
+  if (process.env.DEMO_MODE === "false") {
+    return null;
+  }
+
+  return getOrCreateDemoUserId();
+}

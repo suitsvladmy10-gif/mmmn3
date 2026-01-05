@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { getUserIdFromSession } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { z } from "zod";
 
@@ -27,8 +26,8 @@ const transactionSchema = z.object({
 // GET - список транзакций с фильтрами
 export async function GET(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user?.id) {
+    const userId = await getUserIdFromSession();
+    if (!userId) {
       return NextResponse.json(
         { error: "Не авторизован" },
         { status: 401 }
@@ -45,7 +44,7 @@ export async function GET(request: NextRequest) {
     const skip = (page - 1) * limit;
 
     const where: any = {
-      userId: session.user.id,
+      userId,
     };
 
     if (category) {
@@ -99,8 +98,8 @@ export async function GET(request: NextRequest) {
 // POST - создание транзакции вручную
 export async function POST(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user?.id) {
+    const userId = await getUserIdFromSession();
+    if (!userId) {
       return NextResponse.json(
         { error: "Не авторизован" },
         { status: 401 }
@@ -112,7 +111,7 @@ export async function POST(request: NextRequest) {
 
     const transaction = await prisma.transaction.create({
       data: {
-        userId: session.user.id,
+        userId,
         ...data,
         balance: data.balance || 0,
       },

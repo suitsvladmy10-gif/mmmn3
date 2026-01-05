@@ -1,8 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useSession } from "next-auth/react";
-import { redirect } from "next/navigation";
 import { StatsCards } from "@/components/dashboard/StatsCards";
 import { CategoryChart } from "@/components/dashboard/CategoryChart";
 import { ExpenseTrend } from "@/components/dashboard/ExpenseTrend";
@@ -20,21 +18,12 @@ interface Transaction {
 }
 
 export default function DashboardPage() {
-  const { data: session, status } = useSession();
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (status === "unauthenticated") {
-      redirect("/login");
-    }
-  }, [status]);
-
-  useEffect(() => {
-    if (session) {
-      fetchTransactions();
-    }
-  }, [session]);
+    fetchTransactions();
+  }, []);
 
   const fetchTransactions = async () => {
     try {
@@ -48,7 +37,7 @@ export default function DashboardPage() {
     }
   };
 
-  if (status === "loading" || loading) {
+  if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div>Загрузка...</div>

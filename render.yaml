@@ -10,3 +10,5 @@ services:
         generateValue: true
       - key: DATABASE_URL
         value: file:./dev.db
+      - key: DEMO_MODE
+        value: "true"

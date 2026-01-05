@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { getUserIdFromSession } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { z } from "zod";
 
@@ -32,8 +31,8 @@ export async function PUT(
   { params }: { params: { id: string } }
 ) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user?.id) {
+    const userId = await getUserIdFromSession();
+    if (!userId) {
       return NextResponse.json(
         { error: "Не авторизован" },
         { status: 401 }
@@ -56,7 +55,7 @@ export async function PUT(
       );
     }
 
-    if (existing.userId !== session.user.id) {
+    if (existing.userId !== userId) {
       return NextResponse.json(
         { error: "Нет доступа к этой транзакции" },
         { status: 403 }
@@ -91,8 +90,8 @@ export async function DELETE(
   { params }: { params: { id: string } }
 ) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user?.id) {
+    const userId = await getUserIdFromSession();
+    if (!userId) {
       return NextResponse.json(
         { error: "Не авторизован" },
         { status: 401 }
@@ -113,7 +112,7 @@ export async function DELETE(
       );
     }
 
-    if (existing.userId !== session.user.id) {
+    if (existing.userId !== userId) {
       return NextResponse.json(
         { error: "Нет доступа к этой транзакции" },
         { status: 403 }

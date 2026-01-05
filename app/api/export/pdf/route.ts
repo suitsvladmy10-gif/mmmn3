@@ -1,13 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { getUserIdFromSession } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { jsPDF } from "jspdf";
 
 export async function POST(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user?.id) {
+    const userId = await getUserIdFromSession();
+    if (!userId) {
       return NextResponse.json(
         { error: "Не авторизован" },
         { status: 401 }
@@ -21,7 +20,7 @@ export async function POST(request: NextRequest) {
     let transactions = providedTransactions;
     if (!transactions) {
       transactions = await prisma.transaction.findMany({
-        where: { userId: session.user.id },
+        where: { userId },
         orderBy: { date: "desc" },
       });
     }

@@ -1,22 +1,12 @@
 "use client";
 
-import { useEffect } from "react";
-import { useSession } from "next-auth/react";
-import { redirect } from "next/navigation";
 import { useRouter } from "next/navigation";
 import { Navbar } from "@/components/layout/Navbar";
 import { FileUpload } from "@/components/upload/FileUpload";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function UploadPage() {
-  const { data: session, status } = useSession();
   const router = useRouter();
-
-  useEffect(() => {
-    if (status === "unauthenticated") {
-      redirect("/login");
-    }
-  }, [status]);
 
   const handleUploadComplete = (result: any) => {
     // Можно добавить редирект на страницу транзакций или обновить данные
@@ -25,14 +15,6 @@ export default function UploadPage() {
       router.refresh();
     }, 2000);
   };
-
-  if (status === "loading") {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div>Загрузка...</div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen">

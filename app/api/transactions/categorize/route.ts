@@ -1,14 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { getUserIdFromSession } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { categorizeWithGemini } from "@/lib/categorization";
 
 // POST - AI категоризация транзакции
 export async function POST(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user?.id) {
+    const userId = await getUserIdFromSession();
+    if (!userId) {
       return NextResponse.json(
         { error: "Не авторизован" },
         { status: 401 }
@@ -37,7 +36,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if (transaction.userId !== session.user.id) {
+    if (transaction.userId !== userId) {
       return NextResponse.json(
         { error: "Нет доступа к этой транзакции" },
         { status: 403 }
