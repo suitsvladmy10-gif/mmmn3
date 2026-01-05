@@ -6,6 +6,68 @@ import { categorize } from "@/lib/categorization";
 import { recognizeTextSync } from "@/lib/yandex-vision";
 import { convertFileToBase64, extractTextFromPDF, isImageFile, isPDFFile } from "@/lib/file-utils";
 
+export const runtime = "nodejs";
+
+type SummaryCategory = { category: string; amount: number };
+type SummaryExpense = { date: string; amount: number; description: string; category: string; bank: string };
+
+function buildSummary(transactions: Array<{
+  date: string;
+  amount: number;
+  description: string;
+  category: string;
+  bank: string;
+}>) {
+  const total = transactions.length;
+  const income = transactions
+    .filter((t) => t.amount > 0)
+    .reduce((sum, t) => sum + t.amount, 0);
+  const expenses = transactions
+    .filter((t) => t.amount < 0)
+    .reduce((sum, t) => sum + Math.abs(t.amount), 0);
+  const net = income - expenses;
+
+  const categoryTotals = transactions.reduce((acc, t) => {
+    const amount = t.amount < 0 ? Math.abs(t.amount) : 0;
+    if (!acc[t.category]) {
+      acc[t.category] = 0;
+    }
+    acc[t.category] += amount;
+    return acc;
+  }, {} as Record<string, number>);
+
+  const categories: SummaryCategory[] = Object.entries(categoryTotals)
+    .map(([category, amount]) => ({ category, amount }))
+    .sort((a, b) => b.amount - a.amount);
+
+  const topExpenses: SummaryExpense[] = transactions
+    .filter((t) => t.amount < 0)
+    .sort((a, b) => Math.abs(b.amount) - Math.abs(a.amount))
+    .slice(0, 5)
+    .map((t) => ({
+      date: t.date,
+      amount: Math.abs(t.amount),
+      description: t.description,
+      category: t.category,
+      bank: t.bank,
+    }));
+
+  const dates = transactions.map((t) => t.date).sort();
+  const dateRange = dates.length
+    ? { start: dates[0], end: dates[dates.length - 1] }
+    : null;
+
+  return {
+    totalTransactions: total,
+    income,
+    expenses,
+    net,
+    dateRange,
+    categories,
+    topExpenses,
+  };
+}
+
 export async function POST(request: NextRequest) {
   try {
     const userId = await getUserIdFromSession();
@@ -140,11 +202,22 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    const summary = buildSummary(
+      savedTransactions.map((t) => ({
+        date: t.date,
+        amount: t.amount,
+        description: t.description,
+        category: t.category,
+        bank: t.bank,
+      }))
+    );
+
     return NextResponse.json({
       success: true,
       bank: parsed.bank,
       transactionsCount: savedTransactions.length,
       transactions: savedTransactions,
+      summary,
       errors: errors.length > 0 ? errors : undefined,
     });
   } catch (error) {

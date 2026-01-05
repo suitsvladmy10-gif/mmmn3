@@ -4,7 +4,7 @@ import { useCallback, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Upload, File, CheckCircle2, XCircle, Loader2 } from "lucide-react";
+import { Upload, CheckCircle2, XCircle, Loader2 } from "lucide-react";
 
 interface FileUploadProps {
   onUploadComplete: (result: any) => void;
@@ -15,6 +15,9 @@ export function FileUpload({ onUploadComplete }: FileUploadProps) {
   const [uploadProgress, setUploadProgress] = useState(0);
   const [result, setResult] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
+  const [analysis, setAnalysis] = useState<any>(null);
+  const [analysisError, setAnalysisError] = useState<string | null>(null);
+  const [analysisLoading, setAnalysisLoading] = useState(false);
 
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
     if (acceptedFiles.length === 0) return;
@@ -24,6 +27,8 @@ export function FileUpload({ onUploadComplete }: FileUploadProps) {
     setUploadProgress(0);
     setError(null);
     setResult(null);
+    setAnalysis(null);
+    setAnalysisError(null);
 
     try {
       const formData = new FormData();
@@ -62,6 +67,32 @@ export function FileUpload({ onUploadComplete }: FileUploadProps) {
       setUploading(false);
     }
   }, [onUploadComplete]);
+
+  const handleGeminiAnalysis = async () => {
+    if (!result?.transactions) return;
+    setAnalysis(null);
+    setAnalysisError(null);
+    setAnalysisLoading(true);
+
+    try {
+      const response = await fetch("/api/analysis/gemini", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ transactions: result.transactions }),
+      });
+
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.error || "Ошибка анализа");
+      }
+
+      setAnalysis(data.report);
+    } catch (err) {
+      setAnalysisError(err instanceof Error ? err.message : "Ошибка анализа");
+    } finally {
+      setAnalysisLoading(false);
+    }
+  };
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
@@ -139,13 +170,54 @@ export function FileUpload({ onUploadComplete }: FileUploadProps) {
               <CheckCircle2 className="h-5 w-5" />
               <p className="font-medium">Файл успешно обработан!</p>
             </div>
-            <div className="mt-4 space-y-2 text-sm">
-              <p>
-                <strong>Банк:</strong> {result.bank}
-              </p>
-              <p>
-                <strong>Найдено транзакций:</strong> {result.transactionsCount}
-              </p>
+            <div className="mt-4 space-y-3 text-sm">
+              <div className="grid gap-2 sm:grid-cols-2">
+                <p>
+                  <strong>Банк:</strong> {result.bank}
+                </p>
+                <p>
+                  <strong>Транзакций:</strong> {result.transactionsCount}
+                </p>
+                <p>
+                  <strong>Доходы:</strong> {result.summary?.income?.toFixed?.(2) ?? 0} ₽
+                </p>
+                <p>
+                  <strong>Расходы:</strong> {result.summary?.expenses?.toFixed?.(2) ?? 0} ₽
+                </p>
+              </div>
+
+              {result.summary?.dateRange && (
+                <p>
+                  <strong>Период:</strong> {result.summary.dateRange.start} — {result.summary.dateRange.end}
+                </p>
+              )}
+
+              {result.summary?.categories?.length > 0 && (
+                <div>
+                  <p className="font-medium">Категории (топ-5 по расходам):</p>
+                  <ul className="list-disc list-inside mt-1">
+                    {result.summary.categories.slice(0, 5).map((c: any) => (
+                      <li key={c.category} className="text-xs">
+                        {c.category}: {c.amount.toFixed(2)} ₽
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {result.summary?.topExpenses?.length > 0 && (
+                <div>
+                  <p className="font-medium">Крупные траты (топ-5):</p>
+                  <ul className="list-disc list-inside mt-1">
+                    {result.summary.topExpenses.map((t: any, idx: number) => (
+                      <li key={`${t.date}-${idx}`} className="text-xs">
+                        {t.date} · {t.category} · {t.amount.toFixed(2)} ₽ — {t.description}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
               {result.errors && result.errors.length > 0 && (
                 <div className="mt-2">
                   <p className="font-medium text-yellow-600">
@@ -160,12 +232,75 @@ export function FileUpload({ onUploadComplete }: FileUploadProps) {
                   </ul>
                 </div>
               )}
+
+              <div className="pt-2">
+                <Button
+                  type="button"
+                  onClick={handleGeminiAnalysis}
+                  disabled={analysisLoading}
+                >
+                  {analysisLoading ? "Анализ..." : "Анализировать с Gemini"}
+                </Button>
+              </div>
             </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {analysisError && (
+        <Card className="border-red-200 bg-red-50 dark:bg-red-900/20">
+          <CardContent className="p-4 text-sm text-red-600">
+            {analysisError}
+          </CardContent>
+        </Card>
+      )}
+
+      {analysis && (
+        <Card className="border-blue-200 bg-blue-50 dark:bg-blue-900/20">
+          <CardContent className="p-4 text-sm space-y-3">
+            <p className="font-medium">Gemini анализ</p>
+            {analysis.summary && <p>{analysis.summary}</p>}
+            {analysis.keyMetrics && (
+              <div className="grid gap-2 sm:grid-cols-2">
+                <p><strong>Доходы:</strong> {analysis.keyMetrics.income}</p>
+                <p><strong>Расходы:</strong> {analysis.keyMetrics.expenses}</p>
+                <p><strong>Баланс:</strong> {analysis.keyMetrics.net}</p>
+                <p><strong>Топ категория:</strong> {analysis.keyMetrics.topCategory}</p>
+              </div>
+            )}
+            {Array.isArray(analysis.insights) && analysis.insights.length > 0 && (
+              <div>
+                <p className="font-medium">Инсайты:</p>
+                <ul className="list-disc list-inside">
+                  {analysis.insights.map((item: string, idx: number) => (
+                    <li key={idx}>{item}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            {Array.isArray(analysis.risks) && analysis.risks.length > 0 && (
+              <div>
+                <p className="font-medium">Риски:</p>
+                <ul className="list-disc list-inside">
+                  {analysis.risks.map((item: string, idx: number) => (
+                    <li key={idx}>{item}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            {Array.isArray(analysis.recommendations) && analysis.recommendations.length > 0 && (
+              <div>
+                <p className="font-medium">Рекомендации:</p>
+                <ul className="list-disc list-inside">
+                  {analysis.recommendations.map((item: string, idx: number) => (
+                    <li key={idx}>{item}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </CardContent>
         </Card>
       )}
     </div>
   );
 }
-
-
