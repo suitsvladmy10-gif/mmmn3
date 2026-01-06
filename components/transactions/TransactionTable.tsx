@@ -75,7 +75,7 @@ export function TransactionTable({
 
   return (
     <>
-      <div className="rounded-lg border-0 shadow-lg glass overflow-hidden">
+      <div className="rounded-2xl panel overflow-hidden">
         <Table>
           <TableHeader>
             <TableRow>
@@ -101,7 +101,7 @@ export function TransactionTable({
                   <TableCell>
                     {formatDate(transaction.date)}
                     {transaction.time && (
-                      <span className="text-muted-foreground ml-2">
+                      <span className="text-slate-400 ml-2">
                         {transaction.time}
                       </span>
                     )}
@@ -114,8 +114,8 @@ export function TransactionTable({
                   <TableCell
                     className={`text-right ${
                       transaction.amount >= 0
-                        ? "text-green-600"
-                        : "text-red-600"
+                        ? "text-emerald-300"
+                        : "text-rose-300"
                     }`}
                   >
                     {formatCurrency(transaction.amount)}
@@ -158,4 +158,3 @@ export function TransactionTable({
     </>
   );
 }
-

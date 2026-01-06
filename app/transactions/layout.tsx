@@ -1,15 +1,7 @@
-import { Navbar } from "@/components/layout/Navbar";
-
 export default function TransactionsLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  return (
-    <>
-      <Navbar />
-      {children}
-    </>
-  );
+  return <>{children}</>;
 }
-

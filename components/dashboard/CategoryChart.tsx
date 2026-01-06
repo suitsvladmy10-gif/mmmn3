@@ -8,15 +8,15 @@ interface CategoryChartProps {
 }
 
 const COLORS = [
-  "#0088FE",
-  "#00C49F",
-  "#FFBB28",
-  "#FF8042",
-  "#8884D8",
-  "#82CA9D",
-  "#FFC658",
-  "#FF7C7C",
-  "#8DD1E1",
+  "#22d3ee",
+  "#34d399",
+  "#f59e0b",
+  "#f97316",
+  "#60a5fa",
+  "#a78bfa",
+  "#f43f5e",
+  "#eab308",
+  "#38bdf8",
 ];
 
 export function CategoryChart({ data }: CategoryChartProps) {
@@ -30,7 +30,7 @@ export function CategoryChart({ data }: CategoryChartProps) {
 
   if (chartData.length === 0) {
     return (
-      <Card>
+      <Card className="panel rounded-2xl">
         <CardHeader>
           <CardTitle>Расходы по категориям</CardTitle>
         </CardHeader>
@@ -44,9 +44,9 @@ export function CategoryChart({ data }: CategoryChartProps) {
   }
 
   return (
-    <Card className="gradient-card border-0 shadow-lg">
+    <Card className="panel rounded-2xl">
       <CardHeader>
-        <CardTitle className="text-xl font-bold">Расходы по категориям</CardTitle>
+        <CardTitle className="text-xl font-semibold text-slate-100">Расходы по категориям</CardTitle>
       </CardHeader>
       <CardContent>
         <ResponsiveContainer width="100%" height={300}>
@@ -77,8 +77,14 @@ export function CategoryChart({ data }: CategoryChartProps) {
                   currency: "RUB",
                 }).format(value)
               }
+              contentStyle={{
+                backgroundColor: "rgba(15, 23, 42, 0.9)",
+                border: "1px solid rgba(51, 65, 85, 0.6)",
+                borderRadius: "8px",
+                color: "#e2e8f0",
+              }}
             />
-            <Legend />
+            <Legend wrapperStyle={{ color: "#cbd5f5" }} />
           </PieChart>
         </ResponsiveContainer>
       </CardContent>

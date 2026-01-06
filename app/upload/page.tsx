@@ -1,9 +1,9 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { Navbar } from "@/components/layout/Navbar";
 import { FileUpload } from "@/components/upload/FileUpload";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { AppShell } from "@/components/layout/AppShell";
 
 export default function UploadPage() {
   const router = useRouter();
@@ -17,38 +17,28 @@ export default function UploadPage() {
   };
 
   return (
-    <div className="min-h-screen">
-      <Navbar />
-      <div className="container mx-auto px-4 py-8">
-        <div className="max-w-3xl mx-auto">
-          <div className="mb-8">
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent mb-2">
-              Загрузка выписки
-            </h1>
-            <p className="text-slate-600 dark:text-slate-400">Загрузите скриншот или PDF из личного кабинета банка</p>
-          </div>
+    <AppShell title="Upload" subtitle="Загрузка PDF и изображений">
+      <div className="max-w-3xl">
+        <Card className="mb-6 panel">
+          <CardHeader>
+            <CardTitle className="text-xl font-semibold text-slate-100">Инструкция</CardTitle>
+            <CardDescription className="text-base text-slate-400">
+              Загрузите скриншот или PDF файл из личного кабинета банка
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <ul className="list-disc list-inside space-y-2 text-sm text-slate-400">
+              <li>Поддерживаются изображения (JPG, PNG) и PDF файлы</li>
+              <li>Максимальный размер файла: 10MB</li>
+              <li>Поддерживаемые банки: Сбербанк, Тинькофф, ВТБ</li>
+              <li>Приложение автоматически распознает текст и извлечет транзакции</li>
+              <li>Транзакции будут автоматически категоризированы</li>
+            </ul>
+          </CardContent>
+        </Card>
 
-          <Card className="mb-6 glass border-0 shadow-lg">
-            <CardHeader>
-              <CardTitle className="text-xl font-bold">Инструкция</CardTitle>
-              <CardDescription className="text-base">
-                Загрузите скриншот или PDF файл из личного кабинета банка
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <ul className="list-disc list-inside space-y-2 text-sm text-muted-foreground">
-                <li>Поддерживаются изображения (JPG, PNG) и PDF файлы</li>
-                <li>Максимальный размер файла: 10MB</li>
-                <li>Поддерживаемые банки: Сбербанк, Тинькофф, ВТБ</li>
-                <li>Приложение автоматически распознает текст и извлечет транзакции</li>
-                <li>Транзакции будут автоматически категоризированы</li>
-              </ul>
-            </CardContent>
-          </Card>
-
-          <FileUpload onUploadComplete={handleUploadComplete} />
-        </div>
+        <FileUpload onUploadComplete={handleUploadComplete} />
       </div>
-    </div>
+    </AppShell>
   );
 }

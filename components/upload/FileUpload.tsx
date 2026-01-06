@@ -107,14 +107,14 @@ export function FileUpload({ onUploadComplete }: FileUploadProps) {
 
   return (
     <div className="space-y-4">
-      <Card>
+      <Card className="panel rounded-2xl">
         <CardContent className="p-6">
           <div
             {...getRootProps()}
             className={`border-2 border-dashed rounded-lg p-12 text-center cursor-pointer transition-colors ${
               isDragActive
-                ? "border-primary bg-primary/5"
-                : "border-gray-300 hover:border-primary/50"
+                ? "border-emerald-400 bg-emerald-500/10"
+                : "border-slate-700 hover:border-emerald-400/50"
             } ${uploading ? "pointer-events-none opacity-50" : ""}`}
           >
             <input {...getInputProps()} />
@@ -123,9 +123,9 @@ export function FileUpload({ onUploadComplete }: FileUploadProps) {
                 <Loader2 className="h-12 w-12 mx-auto animate-spin text-primary" />
                 <div>
                   <p className="text-lg font-medium">Загрузка и обработка...</p>
-                  <div className="mt-4 w-full bg-gray-200 rounded-full h-2.5">
+                  <div className="mt-4 w-full bg-slate-800 rounded-full h-2.5">
                     <div
-                      className="bg-primary h-2.5 rounded-full transition-all duration-300"
+                      className="bg-emerald-400 h-2.5 rounded-full transition-all duration-300"
                       style={{ width: `${uploadProgress}%` }}
                     />
                   </div>
@@ -136,14 +136,14 @@ export function FileUpload({ onUploadComplete }: FileUploadProps) {
               </div>
             ) : (
               <div className="space-y-4">
-                <Upload className="h-12 w-12 mx-auto text-muted-foreground" />
+                <Upload className="h-12 w-12 mx-auto text-slate-400" />
                 <div>
                   <p className="text-lg font-medium">
                     {isDragActive
                       ? "Отпустите файл для загрузки"
                       : "Перетащите файл сюда или нажмите для выбора"}
                   </p>
-                  <p className="text-sm text-muted-foreground mt-2">
+                  <p className="text-sm text-slate-400 mt-2">
                     Поддерживаются изображения (JPG, PNG) и PDF файлы до 10MB
                   </p>
                 </div>
@@ -154,9 +154,9 @@ export function FileUpload({ onUploadComplete }: FileUploadProps) {
       </Card>
 
       {error && (
-        <Card className="border-red-200 bg-red-50 dark:bg-red-900/20">
+        <Card className="border-rose-800/60 bg-rose-900/30">
           <CardContent className="p-4">
-            <div className="flex items-center space-x-2 text-red-600">
+            <div className="flex items-center space-x-2 text-rose-200">
               <XCircle className="h-5 w-5" />
               <p>{error}</p>
             </div>
@@ -165,9 +165,9 @@ export function FileUpload({ onUploadComplete }: FileUploadProps) {
       )}
 
       {result && (
-        <Card className="border-green-200 bg-green-50 dark:bg-green-900/20">
+        <Card className="border-emerald-800/60 bg-emerald-900/30">
           <CardContent className="p-4">
-            <div className="flex items-center space-x-2 text-green-600 mb-2">
+            <div className="flex items-center space-x-2 text-emerald-200 mb-2">
               <CheckCircle2 className="h-5 w-5" />
               <p className="font-medium">Файл успешно обработан!</p>
             </div>
@@ -194,8 +194,8 @@ export function FileUpload({ onUploadComplete }: FileUploadProps) {
               )}
 
               {result.summaryAll && (
-                <div className="rounded-md border border-slate-200 bg-white/60 p-3">
-                  <p className="font-medium mb-2">Итоги по всем выпискам</p>
+                <div className="rounded-md border border-slate-800/70 bg-slate-900/60 p-3">
+                  <p className="font-medium mb-2 text-slate-200">Итоги по всем выпискам</p>
                   <div className="grid gap-2 sm:grid-cols-2">
                     <p>
                       <strong>Доходы (всего):</strong> {result.summaryAll.income?.toFixed?.(2) ?? 0} ₽

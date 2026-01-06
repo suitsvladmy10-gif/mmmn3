@@ -42,22 +42,22 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4">
-      <Card className="w-full max-w-md glass border-0 shadow-2xl">
+      <Card className="w-full max-w-md panel">
         <CardHeader className="space-y-1 text-center">
-          <div className="mx-auto w-12 h-12 rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 flex items-center justify-center mb-4">
-            <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="mx-auto w-12 h-12 rounded-full bg-emerald-500/20 flex items-center justify-center mb-4">
+            <svg className="w-6 h-6 text-emerald-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
             </svg>
           </div>
-          <CardTitle className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">Вход</CardTitle>
-          <CardDescription className="text-base">
+          <CardTitle className="text-3xl font-bold text-slate-100">Вход</CardTitle>
+          <CardDescription className="text-base text-slate-400">
             Войдите в свой аккаунт для доступа к приложению
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             {error && (
-              <div className="p-4 text-sm text-red-600 bg-red-50 dark:bg-red-900/20 rounded-lg border border-red-200 dark:border-red-800">
+              <div className="p-4 text-sm text-rose-200 bg-rose-900/40 rounded-lg border border-rose-800/60">
                 {error}
               </div>
             )}
@@ -84,13 +84,13 @@ export default function LoginPage() {
             </div>
             <Button 
               type="submit" 
-              className="w-full gradient-primary text-white hover:opacity-90 transition-opacity shadow-lg shadow-blue-500/30" 
+              className="w-full gradient-primary text-slate-950 hover:opacity-90 transition-opacity shadow-lg shadow-emerald-500/30" 
               disabled={loading}
             >
               {loading ? "Вход..." : "Войти"}
             </Button>
           </form>
-          <div className="mt-4 text-center text-sm text-gray-600 dark:text-gray-400">
+          <div className="mt-4 text-center text-sm text-slate-400">
             Регистрация временно отключена
           </div>
         </CardContent>

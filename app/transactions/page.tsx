@@ -10,8 +10,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Input } from "@/components/ui/input";
 import { Download } from "lucide-react";
+import { AppShell } from "@/components/layout/AppShell";
 
 interface Transaction {
   id: string;
@@ -115,36 +115,9 @@ export default function TransactionsPage() {
   const banks = ["all", "Сбербанк", "Тинькофф", "ВТБ"];
 
   return (
-    <div className="min-h-screen">
-      <div className="container mx-auto px-4 py-8">
-        <div className="flex items-center justify-between mb-6">
-          <div>
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent mb-2">
-              Транзакции
-            </h1>
-            <p className="text-slate-600 dark:text-slate-400">Управление вашими транзакциями</p>
-          </div>
-          <div className="flex items-center space-x-2">
-            <Button 
-              variant="outline" 
-              onClick={handleExportJSON}
-              className="glass border-0 shadow-md hover:shadow-lg transition-shadow"
-            >
-              <Download className="h-4 w-4 mr-2" />
-              Export JSON
-            </Button>
-            <Button 
-              variant="outline" 
-              onClick={handleExportPDF}
-              className="glass border-0 shadow-md hover:shadow-lg transition-shadow"
-            >
-              <Download className="h-4 w-4 mr-2" />
-              Export PDF
-            </Button>
-          </div>
-        </div>
-
-        <div className="flex space-x-4 mb-6">
+    <AppShell title="Transactions" subtitle="История операций и фильтры">
+      <div className="panel rounded-2xl p-5 mb-6 flex flex-wrap items-center gap-3 justify-between">
+        <div className="flex flex-wrap items-center gap-3">
           <div className="w-48">
             <Select value={categoryFilter} onValueChange={setCategoryFilter}>
               <SelectTrigger>
@@ -175,11 +148,19 @@ export default function TransactionsPage() {
           </div>
         </div>
 
-        <TransactionTable
-          transactions={transactions}
-          onUpdate={fetchTransactions}
-        />
+        <div className="flex items-center gap-2">
+          <Button variant="outline" onClick={handleExportJSON} className="panel-muted">
+            <Download className="h-4 w-4 mr-2" />
+            Export JSON
+          </Button>
+          <Button variant="outline" onClick={handleExportPDF} className="panel-muted">
+            <Download className="h-4 w-4 mr-2" />
+            Export PDF
+          </Button>
+        </div>
       </div>
-    </div>
+
+      <TransactionTable transactions={transactions} onUpdate={fetchTransactions} />
+    </AppShell>
   );
 }

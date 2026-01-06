@@ -51,7 +51,7 @@ export function ExpenseTrend({ data }: ExpenseTrendProps) {
 
   if (chartData.length === 0) {
     return (
-      <Card>
+      <Card className="panel rounded-2xl">
         <CardHeader>
           <CardTitle>Тренд расходов</CardTitle>
         </CardHeader>
@@ -65,11 +65,11 @@ export function ExpenseTrend({ data }: ExpenseTrendProps) {
   }
 
   return (
-    <Card className="gradient-card border-0 shadow-lg">
+    <Card className="panel rounded-2xl">
       <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle className="text-xl font-bold">Тренд расходов</CardTitle>
+        <CardTitle className="text-xl font-semibold text-slate-100">Тренд расходов</CardTitle>
         <Select value={period} onValueChange={(v) => setPeriod(v as any)}>
-          <SelectTrigger className="w-[120px]">
+          <SelectTrigger className="w-[120px] panel-muted">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -82,9 +82,10 @@ export function ExpenseTrend({ data }: ExpenseTrendProps) {
       <CardContent>
         <ResponsiveContainer width="100%" height={300}>
           <LineChart data={chartData}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="date" />
+            <CartesianGrid strokeDasharray="3 3" stroke="rgba(148, 163, 184, 0.2)" />
+            <XAxis dataKey="date" stroke="#64748b" />
             <YAxis
+              stroke="#64748b"
               tickFormatter={(value) =>
                 new Intl.NumberFormat("ru-RU", {
                   notation: "compact",
@@ -100,11 +101,17 @@ export function ExpenseTrend({ data }: ExpenseTrendProps) {
                   currency: "RUB",
                 }).format(value)
               }
+              contentStyle={{
+                backgroundColor: "rgba(15, 23, 42, 0.9)",
+                border: "1px solid rgba(51, 65, 85, 0.6)",
+                borderRadius: "8px",
+                color: "#e2e8f0",
+              }}
             />
             <Line
               type="monotone"
               dataKey="amount"
-              stroke="#8884d8"
+              stroke="#22d3ee"
               strokeWidth={2}
             />
           </LineChart>

@@ -18,7 +18,7 @@ export function TopExpenses({ expenses }: TopExpensesProps) {
 
   if (expenses.length === 0) {
     return (
-      <Card>
+      <Card className="panel rounded-2xl">
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
             <TrendingDown className="h-5 w-5" />
@@ -33,11 +33,11 @@ export function TopExpenses({ expenses }: TopExpensesProps) {
   }
 
   return (
-    <Card className="gradient-card border-0 shadow-lg">
+    <Card className="panel rounded-2xl">
       <CardHeader>
-        <CardTitle className="flex items-center space-x-2 text-xl font-bold">
-          <div className="p-2 rounded-lg bg-red-100 dark:bg-red-900/30">
-            <TrendingDown className="h-5 w-5 text-red-600 dark:text-red-400" />
+        <CardTitle className="flex items-center space-x-2 text-xl font-semibold text-slate-100">
+          <div className="p-2 rounded-lg bg-rose-500/15">
+            <TrendingDown className="h-5 w-5 text-rose-300" />
           </div>
           <span>Топ-3 трат</span>
         </CardTitle>
@@ -47,15 +47,15 @@ export function TopExpenses({ expenses }: TopExpensesProps) {
           {expenses.slice(0, 3).map((expense, index) => (
             <div
               key={index}
-              className="flex items-center justify-between border-b pb-3 last:border-0"
+              className="flex items-center justify-between border-b border-slate-800/70 pb-3 last:border-0"
             >
               <div className="flex-1">
-                <div className="font-medium">{expense.description}</div>
-                <div className="text-sm text-muted-foreground">
+                <div className="font-medium text-slate-100">{expense.description}</div>
+                <div className="text-sm text-slate-400">
                   {expense.category}
                 </div>
               </div>
-              <div className="text-lg font-bold text-red-600">
+              <div className="text-lg font-semibold text-rose-300">
                 {formatCurrency(expense.amount)}
               </div>
             </div>
