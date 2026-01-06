@@ -212,12 +212,37 @@ export async function POST(request: NextRequest) {
       }))
     );
 
+    const allTransactions = await prisma.transaction.findMany({
+      where: { userId },
+      orderBy: { date: "desc" },
+    });
+
+    const summaryAll = buildSummary(
+      allTransactions.map((t) => ({
+        date: t.date,
+        amount: t.amount,
+        description: t.description,
+        category: t.category,
+        bank: t.bank,
+      }))
+    );
+
+    const analysisTransactions = allTransactions.slice(0, 200).map((t) => ({
+      date: t.date,
+      amount: t.amount,
+      description: t.description,
+      category: t.category,
+      bank: t.bank,
+    }));
+
     return NextResponse.json({
       success: true,
       bank: parsed.bank,
       transactionsCount: savedTransactions.length,
       transactions: savedTransactions,
       summary,
+      summaryAll,
+      analysisTransactions,
       errors: errors.length > 0 ? errors : undefined,
     });
   } catch (error) {

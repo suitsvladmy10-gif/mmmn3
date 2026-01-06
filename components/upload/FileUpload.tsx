@@ -69,7 +69,8 @@ export function FileUpload({ onUploadComplete }: FileUploadProps) {
   }, [onUploadComplete]);
 
   const handleGeminiAnalysis = async () => {
-    if (!result?.transactions) return;
+    const payloadTransactions = result?.analysisTransactions || result?.transactions;
+    if (!payloadTransactions) return;
     setAnalysis(null);
     setAnalysisError(null);
     setAnalysisLoading(true);
@@ -78,7 +79,7 @@ export function FileUpload({ onUploadComplete }: FileUploadProps) {
       const response = await fetch("/api/analysis/gemini", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ transactions: result.transactions }),
+        body: JSON.stringify({ transactions: payloadTransactions }),
       });
 
       const data = await response.json();
@@ -176,13 +177,13 @@ export function FileUpload({ onUploadComplete }: FileUploadProps) {
                   <strong>Банк:</strong> {result.bank}
                 </p>
                 <p>
-                  <strong>Транзакций:</strong> {result.transactionsCount}
+                  <strong>Транзакций в выписке:</strong> {result.transactionsCount}
                 </p>
                 <p>
-                  <strong>Доходы:</strong> {result.summary?.income?.toFixed?.(2) ?? 0} ₽
+                  <strong>Доходы (выписка):</strong> {result.summary?.income?.toFixed?.(2) ?? 0} ₽
                 </p>
                 <p>
-                  <strong>Расходы:</strong> {result.summary?.expenses?.toFixed?.(2) ?? 0} ₽
+                  <strong>Расходы (выписка):</strong> {result.summary?.expenses?.toFixed?.(2) ?? 0} ₽
                 </p>
               </div>
 
@@ -190,6 +191,26 @@ export function FileUpload({ onUploadComplete }: FileUploadProps) {
                 <p>
                   <strong>Период:</strong> {result.summary.dateRange.start} — {result.summary.dateRange.end}
                 </p>
+              )}
+
+              {result.summaryAll && (
+                <div className="rounded-md border border-slate-200 bg-white/60 p-3">
+                  <p className="font-medium mb-2">Итоги по всем выпискам</p>
+                  <div className="grid gap-2 sm:grid-cols-2">
+                    <p>
+                      <strong>Доходы (всего):</strong> {result.summaryAll.income?.toFixed?.(2) ?? 0} ₽
+                    </p>
+                    <p>
+                      <strong>Расходы (всего):</strong> {result.summaryAll.expenses?.toFixed?.(2) ?? 0} ₽
+                    </p>
+                    <p>
+                      <strong>Баланс (всего):</strong> {result.summaryAll.net?.toFixed?.(2) ?? 0} ₽
+                    </p>
+                    <p>
+                      <strong>Транзакций (всего):</strong> {result.summaryAll.totalTransactions ?? 0}
+                    </p>
+                  </div>
+                </div>
               )}
 
               {result.summary?.categories?.length > 0 && (
