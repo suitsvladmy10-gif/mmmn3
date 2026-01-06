@@ -4,6 +4,14 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
+type GeminiTransaction = {
+  date: string;
+  amount: number;
+  description: string;
+  category: string;
+  bank: string;
+};
+
 export async function POST(request: NextRequest) {
   try {
     const apiKey = process.env.GEMINI_API_KEY;
@@ -15,7 +23,9 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const transactions = Array.isArray(body.transactions) ? body.transactions : [];
+    const transactions: GeminiTransaction[] = Array.isArray(body.transactions)
+      ? body.transactions
+      : [];
 
     if (transactions.length === 0) {
       return NextResponse.json(
@@ -24,7 +34,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const trimmed = transactions.slice(0, 200).map((t) => ({
+    const trimmed = transactions.slice(0, 200).map((t: GeminiTransaction) => ({
       date: t.date,
       amount: t.amount,
       description: t.description,
