@@ -43,15 +43,27 @@ export async function POST(request: NextRequest) {
     }));
 
     const prompt = `Ты финансовый аналитик. На основе списка транзакций верни СТРОГО JSON без пояснений.
+Требования:
+- Считай расходы как абсолютные значения по отрицательным суммам.
+- Укажи топ-3 категории по расходам.
+- Дай детальные, практичные выводы (конкретные причины/паттерны).
+- Рекомендации должны быть применимыми и измеримыми.
+
 Схема:
 {
   "summary": string,
-  "keyMetrics": { "income": number, "expenses": number, "net": number, "topCategory": string },
+  "keyMetrics": {
+    "income": number,
+    "expenses": number,
+    "net": number,
+    "topCategory": string,
+    "topCategories": string[]
+  },
   "insights": string[],
   "risks": string[],
   "recommendations": string[]
 }
-Если данных мало, заполни поля короткими выводами.
+
 Транзакции: ${JSON.stringify(trimmed)}
 `;
 
